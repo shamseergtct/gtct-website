@@ -1,27 +1,22 @@
-import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
-    const form = await req.formData();
+    const formData = await req.formData();
 
-    const name = form.get("name") || "";
-    const phone = form.get("phone") || "";
-    const message = form.get("message") || "";
-    const file = form.get("file");
+    const name = formData.get("name")?.toString() || "";
+    const phone = formData.get("phone")?.toString() || "";
+    const message = formData.get("message")?.toString() || "";
 
-    let attachments = [];
-
-    if (file && typeof file === "object") {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      attachments.push({
-        filename: file.name,
-        content: buffer,
-      });
+    if (!name || !phone || !message) {
+      return NextResponse.json(
+        { success: false, error: "Missing required fields" },
+        { status: 400 }
+      );
     }
 
+    // EMAIL TRANSPORTER
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -30,24 +25,33 @@ export async function POST(req) {
       },
     });
 
-    await transporter.sendMail({
-      from: process.env.CONTACT_EMAIL,
+    const mailOptions = {
+      from: `"GTCT Website" <${process.env.CONTACT_EMAIL}>`,
       to: process.env.CONTACT_EMAIL,
-      subject: "New Lead Received",
+      subject: "New Lead Received – GTCT Website",
+      text: `
+New Lead Received
+
+Name: ${name}
+Mobile: ${phone}
+Business Info: ${message}
+`,
       html: `
         <h2>New Lead Received</h2>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Mobile:</strong> ${phone}</p>
         <p><strong>Business Info:</strong> ${message}</p>
       `,
-      attachments,
-    });
+    };
+
+    await transporter.sendMail(mailOptions);
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Email Sending Error:", error);
+  } catch (error: any) {
+    console.error("EMAIL ERROR →", error);
+
     return NextResponse.json(
-      { error: "Email sending failed" }, 
+      { success: false, error: "Failed to send email" },
       { status: 500 }
     );
   }

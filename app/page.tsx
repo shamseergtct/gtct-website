@@ -13,8 +13,8 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // SUBMIT HANDLER
-  const handleSubmit = async (e) => {
+  // SUBMIT HANDLER — FIXED TYPE
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
@@ -35,13 +35,14 @@ export default function HomePage() {
       setName("");
       setPhone("");
       setMessage("");
+
+      // auto-hide success after 3s
       setTimeout(() => setSuccess(false), 3000);
     }
   };
 
   return (
     <>
-      {/* TOP SECTIONS */}
       <Hero />
       <WhyChooseUs />
       <ServicesShowcase />
@@ -64,6 +65,7 @@ export default function HomePage() {
               clear dashboards and define the next 90-day focus.
             </p>
           </div>
+
           <a
             href="#contact"
             className="rounded-full bg-white px-5 py-2.5 text-xs font-semibold text-blue-700 shadow-sm transition hover:bg-slate-100 dark:bg-slate-950 dark:text-lime-300 dark:hover:bg-slate-900"
@@ -73,7 +75,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CONTACT FORM — FUNCTIONAL */}
+      {/* CONTACT FORM */}
       <section
         id="contact"
         className="bg-white py-16 text-sm text-slate-900 dark:bg-slate-950 dark:text-slate-50"
@@ -93,13 +95,13 @@ export default function HomePage() {
           </p>
 
           <div className="mt-6 grid gap-6 md:grid-cols-[2fr,1.3fr]">
-            {/* FORM BLOCK */}
+            {/* FORM */}
             <form
               onSubmit={handleSubmit}
               className="space-y-4 rounded-2xl border border-slate-100 bg-slate-50 p-5 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900"
             >
+              {/* NAME + PHONE */}
               <div className="grid gap-4 md:grid-cols-2">
-                {/* NAME */}
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-300">
                     Name
@@ -114,7 +116,6 @@ export default function HomePage() {
                   />
                 </div>
 
-                {/* PHONE */}
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-300">
                     WhatsApp / Mobile
@@ -145,7 +146,7 @@ export default function HomePage() {
                 />
               </div>
 
-              {/* SUBMIT BUTTON */}
+              {/* SUBMIT */}
               <button
                 type="submit"
                 disabled={loading}
@@ -154,7 +155,7 @@ export default function HomePage() {
                 {loading ? "Submitting..." : "Request Strategy Call (No obligation)"}
               </button>
 
-              {/* SUCCESS MESSAGE */}
+              {/* SUCCESS ANIMATION */}
               {success && (
                 <p className="text-green-600 text-[11px] font-medium animate-pulse">
                   ✔ Request submitted! We'll contact you shortly.
@@ -162,7 +163,7 @@ export default function HomePage() {
               )}
             </form>
 
-            {/* CONTACT INFO CARD */}
+            {/* INFO CARD */}
             <div className="space-y-3 rounded-2xl border border-slate-100 bg-slate-50 p-5 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900">
               <p className="font-semibold text-slate-900 dark:text-slate-50">
                 GTCT Private Limited
